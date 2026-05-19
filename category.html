@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>বিভাগ - দৈনিক আলোকিত</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/ai-chat.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
+                <div class="logo-icon">আ</div>
+                <div class="logo-text">
+                    <h1>দৈনিক আলোকিত</h1>
+                    <span>Doinik Alokito</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="ai-header-btn" onclick="openAIChat()">
+                    <i class="fas fa-sparkles"></i>
+                    <span>AI সহায়ক</span>
+                </button>
+                <button class="search-toggle" onclick="toggleSearch()"><i class="fas fa-search"></i></button>
+                <button class="menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="container">
+            <ul class="nav-list" id="main-nav-list">
+                <!-- Populated by JS -->
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container" style="padding: 40px 20px;">
+        <div class="section-header" style="margin-bottom: 30px;">
+            <h1 class="section-title" id="page-title" style="font-size: 2rem;">সংবাদ</h1>
+        </div>
+
+        <div class="news-grid" id="category-news-grid">
+            <!-- Populated by JS -->
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-bottom" style="margin-top: 40px;">
+                &copy; ২০২৬ দৈনিক আলোকিত। সর্বস্বত্ব সংরক্ষিত।
+            </div>
+        </div>
+    </footer>
+
+    <!-- Search Overlay -->
+    <div class="search-overlay" id="search-overlay">
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="খবর খুঁজুন...">
+            <button onclick="performSearch()">খুঁজুন</button>
+            <button onclick="toggleSearch()" style="background: var(--text-secondary);"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+
+    <!-- AI Chat Panel Container -->
+    <div id="ai-chat-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/news-data.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/ai-chat.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            setupNavigation();
+            initAIChat();
+            loadCategoryNews();
+        });
+
+        function loadCategoryNews() {
+            const params = new URLSearchParams(window.location.search);
+            const category = params.get('c');
+            const query = params.get('q');
+            
+            const titleEl = document.getElementById('page-title');
+            const grid = document.getElementById('category-news-grid');
+            
+            let filteredNews = [];
+
+            if(query) {
+                titleEl.innerHTML = `<i class="fas fa-search icon"></i> অনুসন্ধান: "${query}"`;
+                document.title = `অনুসন্ধান: ${query} - দৈনিক আলোকিত`;
+                const qLower = query.toLowerCase();
+                filteredNews = NEWS_DATA.filter(n => 
+                    n.title.toLowerCase().includes(qLower) || 
+                    n.summary.toLowerCase().includes(qLower) ||
+                    (n.tags && n.tags.some(t => t.toLowerCase().includes(qLower)))
+                );
+            } else if(category && category !== 'all') {
+                titleEl.innerHTML = `<i class="fas fa-folder icon"></i> বিভাগ: ${category}`;
+                document.title = `${category} - দৈনিক আলোকিত`;
+                
+                // Set nav active state
+                setTimeout(() => {
+                    document.querySelectorAll('#main-nav-list a').forEach(a => {
+                        a.classList.remove('active');
+                        if(a.innerText === category) a.classList.add('active');
+                    });
+                }, 100);
+
+                filteredNews = NEWS_DATA.filter(n => n.category === category);
+            } else {
+                titleEl.innerHTML = `<i class="far fa-newspaper icon"></i> সকল সংবাদ`;
+                filteredNews = NEWS_DATA;
+            }
+
+            if(filteredNews.length === 0) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; padding: 40px; text-align: center; background: white; border-radius: 10px;">
+                    <h2>কোন সংবাদ পাওয়া যায়নি।</h2>
+                </div>`;
+                return;
+            }
+
+            let html = '';
+            filteredNews.forEach((news, idx) => {
+                const catObj = CATEGORIES.find(c => c.id === news.category);
+                const color = catObj ? catObj.color : '#1a56db';
+
+                html += `
+                    <div class="news-card" onclick="window.location.href='article.html?id=${news.id}'">
+                        <div class="news-card-image-wrap">
+                            <img src="${getImageUrl(news.id, idx)}" alt="News" class="news-card-image">
+                        </div>
+                        <div class="news-card-body">
+                            <span class="news-card-category" style="background: ${color}">${news.category}</span>
+                            <h3 class="news-card-title">${news.title}</h3>
+                            <p class="news-card-summary">${news.summary}</p>
+                            <div class="news-card-meta">
+                                <span class="news-card-author">${news.author}</span>
+                                <span>${formatDate(news.date)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            grid.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

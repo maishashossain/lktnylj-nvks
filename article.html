@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সংবাদ বিস্তারিত - দৈনিক আলোকিত</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/article.css">
+    <link rel="stylesheet" href="css/ai-chat.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
+                <div class="logo-icon">আ</div>
+                <div class="logo-text">
+                    <h1>দৈনিক আলোকিত</h1>
+                    <span>Doinik Alokito</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="ai-header-btn" onclick="openAIChat()">
+                    <i class="fas fa-sparkles"></i>
+                    <span>AI সহায়ক</span>
+                </button>
+                <button class="search-toggle" onclick="toggleSearch()"><i class="fas fa-search"></i></button>
+                <button class="menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="container">
+            <ul class="nav-list" id="main-nav-list">
+                <!-- Populated by JS -->
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container article-page">
+        <div class="article-layout">
+            <main class="article-content-area" id="article-content-area">
+                <!-- Populated by JS -->
+                <div class="skeleton" style="height: 40px; width: 60%; margin-bottom: 20px;"></div>
+                <div class="skeleton" style="height: 400px; width: 100%; margin-bottom: 20px;"></div>
+                <div class="skeleton" style="height: 20px; width: 100%; margin-bottom: 10px;"></div>
+                <div class="skeleton" style="height: 20px; width: 100%; margin-bottom: 10px;"></div>
+                <div class="skeleton" style="height: 20px; width: 80%; margin-bottom: 10px;"></div>
+            </main>
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-widget">
+                    <h3 class="sidebar-widget-title"><i class="fas fa-bolt" style="color: #f59e0b;"></i> সম্পর্কিত সংবাদ</h3>
+                    <div id="related-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="sidebar-widget ai-widget">
+                    <div class="ai-widget-content">
+                        <div class="ai-widget-icon">🤖</div>
+                        <h3 style="font-size: 1.1rem; margin-bottom: 8px;">এই সংবাদটি বুঝিয়ে বলুন</h3>
+                        <p class="ai-widget-text">AI সহায়ক আপনাকে এই সংবাদের সারসংক্ষেপ বা পটভূমি জানাতে পারে।</p>
+                        <button class="ai-widget-btn" onclick="openAIChat('এই সংবাদের সারসংক্ষেপ তৈরি করে দাও।')">
+                            সারসংক্ষেপ দেখুন
+                        </button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Search Overlay -->
+    <div class="search-overlay" id="search-overlay">
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="খবর খুঁজুন...">
+            <button onclick="performSearch()">খুঁজুন</button>
+            <button onclick="toggleSearch()" style="background: var(--text-secondary);"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+
+    <!-- AI Chat Panel Container -->
+    <div id="ai-chat-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/news-data.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/ai-chat.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            setupNavigation();
+            initAIChat();
+            loadArticle();
+        });
+
+        function loadArticle() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            const area = document.getElementById('article-content-area');
+            const relatedList = document.getElementById('related-list');
+
+            if(!id) {
+                area.innerHTML = `<h2>সংবাদটি পাওয়া যায়নি।</h2><p><a href="index.html">প্রচ্ছদে ফিরে যান</a></p>`;
+                return;
+            }
+
+            const news = NEWS_DATA.find(n => n.id === id);
+            
+            if(!news) {
+                area.innerHTML = `<h2>সংবাদটি পাওয়া যায়নি।</h2><p><a href="index.html">প্রচ্ছদে ফিরে যান</a></p>`;
+                return;
+            }
+
+            document.title = `${news.title} - দৈনিক আলোকিত`;
+            
+            // Generate article HTML
+            let tagsHtml = '';
+            if(news.tags && news.tags.length > 0) {
+                tagsHtml = '<div class="article-tags">';
+                news.tags.forEach(tag => {
+                    tagsHtml += `<a href="#" class="article-tag">#${tag}</a>`;
+                });
+                tagsHtml += '</div>';
+            }
+
+            const catObj = CATEGORIES.find(c => c.id === news.category);
+            const color = catObj ? catObj.color : '#1a56db';
+
+            area.innerHTML = `
+                <div class="breadcrumb">
+                    <a href="index.html">প্রচ্ছদ</a>
+                    <span class="sep">/</span>
+                    <a href="category.html?c=${news.category}">${news.category}</a>
+                </div>
+
+                <div class="article-header">
+                    <span class="article-category-badge" style="background: ${color}">${news.category}</span>
+                    <h1 class="article-title">${news.title}</h1>
+                    <div class="article-summary">${news.summary}</div>
+                    
+                    <div class="article-meta-bar">
+                        <div class="article-meta-item">
+                            <i class="far fa-user icon"></i>
+                            <strong>${news.author}</strong>
+                        </div>
+                        <div class="article-meta-item">
+                            <i class="far fa-clock icon"></i>
+                            <span>${formatDate(news.date)}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <img src="${getImageUrl(news.id, 0)}" alt="${news.title}" class="article-hero-image">
+                <div class="article-image-caption">সংগৃহীত ছবি</div>
+
+                <div class="article-body">
+                    ${news.content}
+                </div>
+
+                <button class="article-ai-btn" onclick="openAIChat('এই সংবাদটি সম্পর্কে আমার কিছু প্রশ্ন আছে।')">
+                    <i class="fas fa-sparkles ai-icon"></i>
+                    AI এর সাথে এই সংবাদটি নিয়ে আলোচনা করুন
+                </button>
+
+                <div class="article-share-bar">
+                    <span class="share-label">শেয়ার করুন:</span>
+                    <button class="share-btn facebook"><i class="fab fa-facebook-f"></i></button>
+                    <button class="share-btn twitter"><i class="fab fa-twitter"></i></button>
+                    <button class="share-btn whatsapp"><i class="fab fa-whatsapp"></i></button>
+                    <button class="share-btn copy"><i class="fas fa-link"></i></button>
+                </div>
+
+                ${tagsHtml}
+            `;
+
+            // Load related news
+            const related = NEWS_DATA.filter(n => n.category === news.category && n.id !== news.id).slice(0, 4);
+            let relHtml = '';
+            related.forEach(r => {
+                relHtml += `
+                    <div class="trending-item" onclick="window.location.href='article.html?id=${r.id}'">
+                        <div>
+                            <div class="trending-title">${r.title}</div>
+                            <div class="trending-meta">${formatDate(r.date)}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            if(relatedList) relatedList.innerHTML = relHtml || '<p>কোন সম্পর্কিত সংবাদ নেই।</p>';
+        }
+    </script>
+</body>
+</html>

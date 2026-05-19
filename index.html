@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>দৈনিক আলোকিত - সর্বশেষ সংবাদ</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/ai-chat.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-date" id="current-date">মঙ্গলবার, ১৯ মে ২০২৬</div>
+            <div class="top-bar-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="admin.html">অ্যাডমিন</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="logo">
+                <div class="logo-icon">আ</div>
+                <div class="logo-text">
+                    <h1>দৈনিক আলোকিত</h1>
+                    <span>Doinik Alokito</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="ai-header-btn" onclick="openAIChat()">
+                    <i class="fas fa-sparkles"></i>
+                    <span>AI সহায়ক</span>
+                    <div class="pulse-dot"></div>
+                </button>
+                <button class="search-toggle" onclick="toggleSearch()"><i class="fas fa-search"></i></button>
+                <button class="menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="container">
+            <ul class="nav-list" id="main-nav-list">
+                <!-- Populated by JS -->
+                <li><a href="index.html" class="active">প্রচ্ছদ</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Breaking News Ticker -->
+    <div class="ticker-bar">
+        <div class="container" style="display: flex; height: 100%; max-width: 100%; padding: 0;">
+            <div class="ticker-label">
+                <div class="dot"></div> সর্বশেষ
+            </div>
+            <div class="ticker-content" id="breaking-ticker">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <div class="container main-layout">
+        <main class="main-content">
+            
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <div class="hero-grid" id="hero-container">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- Latest News Grid -->
+            <section>
+                <div class="section-header">
+                    <h2 class="section-title"><i class="far fa-clock icon"></i> সদ্যপ্রাপ্ত সংবাদ</h2>
+                    <a href="category.html?c=all" class="section-more">সব সংবাদ দেখুন <i class="fas fa-chevron-right"></i></a>
+                </div>
+                <div class="news-grid" id="latest-news-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- Category Strip -->
+            <section style="margin: 40px 0;">
+                <div class="category-strip" id="category-strip">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-widget ai-widget">
+                <div class="ai-widget-content">
+                    <div class="ai-widget-icon">🤖</div>
+                    <h3 style="font-size: 1.1rem; margin-bottom: 8px;">আপনার ব্যক্তিগত এআই সহায়ক</h3>
+                    <p class="ai-widget-text">সংবাদ সম্পর্কে প্রশ্ন করুন, সারসংক্ষেপ জানুন বা অনুবাদ করুন।</p>
+                    <button class="ai-widget-btn" onclick="openAIChat()">
+                        চ্যাট শুরু করুন <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="sidebar-widget">
+                <h3 class="sidebar-widget-title"><i class="fas fa-fire" style="color: #e63946;"></i> আলোচিত সংবাদ</h3>
+                <div id="trending-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">দৈনিক আলোকিত</div>
+                    <p>বস্তুনিষ্ঠ ও নিরপেক্ষ সংবাদ পরিবেশনে অঙ্গীকারবদ্ধ। আধুনিক যুগের স্মার্ট সংবাদপত্র।</p>
+                </div>
+                <div class="footer-col">
+                    <h4>বিভাগ</h4>
+                    <a href="category.html?c=রাজনীতি">রাজনীতি</a>
+                    <a href="category.html?c=অর্থনীতি">অর্থনীতি</a>
+                    <a href="category.html?c=খেলা">খেলাধুলা</a>
+                    <a href="category.html?c=বিনোদন">বিনোদন</a>
+                </div>
+                <div class="footer-col">
+                    <h4>নীতিমালা</h4>
+                    <a href="#">গোপনীয়তা নীতি</a>
+                    <a href="#">ব্যবহারের শর্তাবলী</a>
+                    <a href="#">বিজ্ঞাপন নীতি</a>
+                </div>
+                <div class="footer-col">
+                    <h4>যোগাযোগ</h4>
+                    <a href="#">আমাদের সম্পর্কে</a>
+                    <a href="#">যোগাযোগ করুন</a>
+                    <a href="#">info@alokito.news</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; ২০২৬ দৈনিক আলোকিত। সর্বস্বত্ব সংরক্ষিত।
+            </div>
+        </div>
+    </footer>
+
+    <!-- Search Overlay -->
+    <div class="search-overlay" id="search-overlay">
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="খবর খুঁজুন...">
+            <button onclick="performSearch()">খুঁজুন</button>
+            <button onclick="toggleSearch()" style="background: var(--text-secondary);"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <button class="mobile-menu-close" onclick="toggleMobileMenu()"><i class="fas fa-times"></i></button>
+        <div class="logo" style="margin-bottom: 20px;">
+            <div class="logo-icon">আ</div>
+            <div class="logo-text"><h1>দৈনিক আলোকিত</h1></div>
+        </div>
+        <div class="mobile-menu-list" id="mobile-nav-list">
+            <!-- Populated by JS -->
+            <a href="index.html">প্রচ্ছদ</a>
+        </div>
+    </div>
+
+    <!-- AI Chat Panel Container -->
+    <div id="ai-chat-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/news-data.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/ai-chat.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            renderHomepage();
+            initAIChat();
+        });
+    </script>
+</body>
+</html>

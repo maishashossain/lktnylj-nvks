@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অ্যাডমিন প্যানেল - দৈনিক আলোকিত</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .admin-panel {
+            background: white;
+            padding: 30px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .checkbox-group input {
+            width: auto;
+        }
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .btn-primary:hover {
+            background: #1e40af;
+        }
+        .result-panel {
+            background: #1e1e2e;
+            color: #cdd6f4;
+            padding: 20px;
+            border-radius: var(--radius-md);
+            font-family: 'Consolas', monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .copy-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .instruction {
+            background: #eef2ff;
+            border-left: 4px solid var(--accent-primary);
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 0 4px 4px 0;
+        }
+    </style>
+</head>
+<body style="background: var(--bg-secondary);">
+
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
+                <div class="logo-icon">আ</div>
+                <div class="logo-text">
+                    <h1>দৈনিক আলোকিত</h1>
+                    <span>Admin Portal</span>
+                </div>
+            </div>
+            <div>
+                <a href="index.html" style="color: var(--accent-primary); font-weight: 600;">প্রচ্ছদে ফিরে যান <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <div class="admin-container">
+        
+        <!-- Form Side -->
+        <div class="admin-panel">
+            <h2 style="margin-bottom: 24px;"><i class="fas fa-pen-nib text-primary"></i> নতুন সংবাদ যোগ করুন</h2>
+            
+            <div class="instruction">
+                <strong>কিভাবে কাজ করে:</strong> এই ফর্মটি পূরণ করে "JSON তৈরি করুন" বাটনে ক্লিক করুন। তারপর ডানদিকের কোডটি কপি করে <code>news-data.js</code> ফাইলের <code>NEWS_DATA</code> অ্যারের একেবারে শুরুতে পেস্ট করুন।
+            </div>
+
+            <form id="news-form">
+                <div class="form-group">
+                    <label class="form-label">শিরোনাম (Title)</label>
+                    <input type="text" id="title" required placeholder="সংবাদের শিরোনাম...">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">সারসংক্ষেপ (Summary)</label>
+                    <textarea id="summary" rows="2" required placeholder="সংবাদের সংক্ষিপ্ত বিবরণ..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">মূল সংবাদ (Content - HTML)</label>
+                    <textarea id="content" rows="6" required placeholder="<p>সংবাদের বিস্তারিত অংশ...</p>"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">বিভাগ (Category)</label>
+                    <select id="category" required>
+                        <option value="জাতীয়">জাতীয়</option>
+                        <option value="রাজনীতি">রাজনীতি</option>
+                        <option value="অর্থনীতি">অর্থনীতি</option>
+                        <option value="খেলা">খেলা</option>
+                        <option value="বিনোদন">বিনোদন</option>
+                        <option value="প্রযুক্তি">প্রযুক্তি</option>
+                        <option value="আন্তর্জাতিক">আন্তর্জাতিক</option>
+                        <option value="মতামত">মতামত</option>
+                        <option value="জীবনযাপন">জীবনযাপন</option>
+                        <option value="শিক্ষা">শিক্ষা</option>
+                        <option value="বিজ্ঞান">বিজ্ঞান</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">ছবি URL (Image)</label>
+                    <input type="text" id="image" placeholder="https://... (ঐচ্ছিক)">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">লেখকের নাম (Author)</label>
+                    <input type="text" id="author" value="নিজস্ব প্রতিবেদক" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">ট্যাগ (Tags - কমা দিয়ে আলাদা করুন)</label>
+                    <input type="text" id="tags" placeholder="বাংলাদেশ, রাজনীতি, নির্বাচন">
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="isFeatured">
+                    <label for="isFeatured">প্রধান খবর (Hero Section)</label>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="isBreaking">
+                    <label for="isBreaking">ব্রেকিং নিউজ (Ticker)</label>
+                </div>
+
+                <button type="button" class="btn-primary" onclick="generateJSON()">JSON তৈরি করুন</button>
+            </form>
+        </div>
+
+        <!-- Output Side -->
+        <div>
+            <h3 style="margin-bottom: 20px;">আউটপুট (JSON)</h3>
+            <div class="result-panel" id="result-panel">
+                <button class="copy-btn" onclick="copyJSON()">Copy</button>
+                <div id="json-output">// আপনার তৈরি করা কোড এখানে দেখাবে...</div>
+            </div>
+            
+            <div style="margin-top: 20px; font-size: 0.9rem; color: var(--text-secondary);">
+                <i class="fas fa-info-circle"></i> <strong>টিপস:</strong> প্রতিদিন নতুন খবর আপডেট করতে শুধু এই টুলটি ব্যবহার করুন এবং কপি করা কোডটি <code>news-data.js</code> ফাইলে পেস্ট করে সেভ করুন। কোন ডাটাবেসের প্রয়োজন নেই!
+            </div>
+        </div>
+
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>
